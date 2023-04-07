@@ -1,0 +1,12 @@
+--
+
+CREATE TABLE result (
+    id INTEGER NOT NULL,
+    date VARCHAR(255),
+    res DOUBLE PRECISION NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE result_seq START WITH 1;
+
+--

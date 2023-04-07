@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Anti-Plagiarism Checker</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+<body>
+<h1>Anti-Plagiarism Checker</h1>
+<form>
+
+<!--  <section id="content-section">-->
+<!--    <h1 align="center">Проверка текста на плагиат</h1>-->
+<!--    <form name="text_plagiarism_input-form" th:action="@{/service}" th:object="${InputText}" th:method="POST">-->
+<!--      <h2>Введите текст:</h2>-->
+<!--      <textarea  th:field="${InputText.content}" name="plag_input" cols=100 rows=10 required placeholder="Text"></textarea>-->
+<!--      <button class="c-button submit service" onclick="">Проверить</button>-->
+<!--    </form>-->
+<!--  </section>-->
+
+  <label for="text-input">Input text:</label>
+  <textarea id="text-input" name="text" rows="10" cols="50"></textarea>
+  <br>
+  <label for="file-input">Upload a file:</label>
+  <input type="file" id="file-input" name="file">
+  <br>
+  <button type="submit">Submit</button>
+</form>
+<script src="/static/js/validation.js"></script>
+</body>
+</html>

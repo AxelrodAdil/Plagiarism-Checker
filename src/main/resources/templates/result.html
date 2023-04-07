@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Anti-Plagiarism Checker</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+<body>
+<h1>Anti-Plagiarism Checker</h1>
+<form>
+
+    <section id="content-section">
+        <h1 align="center">Результат</h1>
+
+        <section class="res-form" align="left">
+            <p>Процент оригинальности: <p th:text="${result_of_scan.content}"></p>
+            <table class="table">
+                <tr>
+                    <th>Ваш материал мог быть взят отсюда:</th>
+                </tr>
+                <tr th:each="url : ${find_url}" >
+                    <td th:text="${url}"></td>
+                </tr>
+            </table>
+            <ul>
+                <li><a href="">Выполнить еще одну проверку</a></li>
+            </ul>
+        </section>
+    </section>
+
+</form>
+<script src="/static/js/validation.js"></script>
+</body>
+</html>
