@@ -24,6 +24,7 @@ dependencies {
     implementation("commons-io:commons-io:2.11.0")
     implementation("org.apache.tika:tika-core:2.7.0")
     implementation("org.apache.tika:tika-parser-microsoft-module:2.7.0")
+    implementation("org.apache.pdfbox:pdfbox:2.0.27")
 
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     compileOnly("org.projectlombok:lombok:1.18.26")

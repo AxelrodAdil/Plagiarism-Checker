@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @Slf4j
 public class CheckTextService {
 
-    public Object[] start(String userText) throws IOException {
+    public Object[] start(String userText, String language) throws IOException {
         var mainResultArray = new Object[2];
         var sentences = userText.split("\\.");
         log.info("CheckTextService mainResultArray={}, sentences={}", mainResultArray, sentences);
@@ -21,7 +21,7 @@ public class CheckTextService {
             var googleSearcher = new GoogleSearcher();
             var urlFoundedInGoogle = googleSearcher.findUrlsBySentence(userText);
             log.info("CheckTextService urlFoundedInGoogle={}", urlFoundedInGoogle);
-            var result = googleSearcher.getResultOfScan(userText, urlFoundedInGoogle);
+            var result = googleSearcher.getResultOfScan(userText, urlFoundedInGoogle, language);
             log.info("CheckTextService ResultOfScan={}", result);
             resultOfText += (int) result[0];
             urlsList.addAll((ArrayList<String>) result[1]);

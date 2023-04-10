@@ -9,4 +9,10 @@ public class AntiPlagiarismApplication {
     public static void main(String[] args) {
         SpringApplication.run(AntiPlagiarismApplication.class, args);
     }
+
+    // TODO:
+//    add error handler
+//    use msa patterns
+//    executorService
+//    front -> back
 }

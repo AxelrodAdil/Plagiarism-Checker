@@ -32,12 +32,12 @@ public class GoogleSearcher {
         return urls;
     }
 
-    public Object[] getResultOfScan(String textForCheck, ArrayList<String> urls) {
+    public Object[] getResultOfScan(String textForCheck, ArrayList<String> urls, String language) {
         var shingle = new Shingle();
         Object[] mainResultArray = new Object[2];
         var resultOfUrls = new ArrayList<String>();
         var resultPercentage = 0d;
-        var hashesOfCheckingText = shingle.getArrayListOfGeneratedShingles(textForCheck);
+        var hashesOfCheckingText = shingle.getArrayListOfGeneratedShingles(textForCheck, language);
         var resultOfText = new StringBuilder();
         for (var url : urls) {
             try {
@@ -47,8 +47,8 @@ public class GoogleSearcher {
                 for (Element paragraph : paragraphs) {
                     resultOfText.append(" ").append(paragraph.text());
                 }
-                resultOfText = new StringBuilder(shingle.getCanonizedText(resultOfText.toString()));
-                var resultOfHashes = shingle.getArrayListOfGeneratedShingles(resultOfText.toString());
+                resultOfText = new StringBuilder(shingle.getCanonizedText(resultOfText.toString(), language));
+                var resultOfHashes = shingle.getArrayListOfGeneratedShingles(resultOfText.toString(), language);
                 if (shingle.getResultOfComparison(hashesOfCheckingText, resultOfHashes) > 0) {
                     resultOfUrls.add(url);
                 }

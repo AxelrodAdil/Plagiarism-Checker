@@ -20,8 +20,9 @@ public class AntiPlagiarismController {
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public String getResult(@RequestPart(value = "text", required = false) String text,
-                            @RequestPart(value = "file", required = false) MultipartFile file) {
+                            @RequestPart(value = "file", required = false) MultipartFile file,
+                            @RequestPart(value = "lang", required = false) String language) {
         antiPlagiarismService.validateInputTextAndFile(text, file);
-        return antiPlagiarismService.getResult(text, file);
+        return antiPlagiarismService.getResult(text, file, language);
     }
 }
