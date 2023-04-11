@@ -15,20 +15,20 @@ public class GoogleSearcher {
 
     public ArrayList<String> findUrlsBySentence(String text) throws IOException {
         String searchUrl = "https://www.google.com/search?q=" + text;
-        Document document = Jsoup.connect(searchUrl).userAgent("Chrome/4.0.249.0 Safari/532.5").followRedirects(true)
+        Document document = Jsoup.connect(searchUrl).userAgent("Mozilla Chrome/4.0.249.0 Safari/532.5").followRedirects(true)
                 .referrer("http://www.google.com").get();
         document.charset(StandardCharsets.UTF_8);
         Elements hrefs = document.select("a[href]");
-        ArrayList<String> urls = new ArrayList<>();
-        hrefs.stream().filter(href -> href.attr("href")
-                        .contains("/url?q=") & !href.attr("href")
-                        .contains("pdf") & href.attr("href").length() < 200)
-                .forEachOrdered(href -> {
-                    var lastCharacter = (href.attr("href").indexOf("&sa"));
-                    var result = new char[lastCharacter - 7];
-                    href.attr("href").getChars(7, lastCharacter, result, 0);
-                    urls.add(String.valueOf(result));
-                });
+        var urls = new ArrayList<String>();
+        hrefs.stream().filter(href -> href.attr("href").contains("/url?q=")
+                & !href.attr("href").contains("pdf")
+                & !href.attr("href").contains("youtube")
+                & href.attr("href").length() < 200).forEachOrdered(href -> {
+            var lastCharacter = (href.attr("href").indexOf("&sa"));
+            var result = new char[lastCharacter - 7];
+            href.attr("href").getChars(7, lastCharacter, result, 0);
+            urls.add(String.valueOf(result));
+        });
         return urls;
     }
 
@@ -40,6 +40,7 @@ public class GoogleSearcher {
         var hashesOfCheckingText = shingle.getArrayListOfGeneratedShingles(textForCheck, language);
         var resultOfText = new StringBuilder();
         for (var url : urls) {
+            log.info("GoogleSearcher-getResultOfScan url={}", url);
             try {
                 var document = Jsoup.connect(url).userAgent("Yandex").followRedirects(true)
                         .referrer("http://www.google.com").get();

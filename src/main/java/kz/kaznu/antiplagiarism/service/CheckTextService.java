@@ -17,12 +17,12 @@ public class CheckTextService {
         log.info("CheckTextService mainResultArray={}, sentences={}", mainResultArray, sentences);
         var resultOfText = 0;
         var urlsList = new ArrayList<String>();
-        for (int i = 0; i < sentences.length; i++) {
+        for (String sentence : sentences) {
             var googleSearcher = new GoogleSearcher();
-            var urlFoundedInGoogle = googleSearcher.findUrlsBySentence(userText);
+            var urlFoundedInGoogle = googleSearcher.findUrlsBySentence(sentence);
             log.info("CheckTextService urlFoundedInGoogle={}", urlFoundedInGoogle);
-            var result = googleSearcher.getResultOfScan(userText, urlFoundedInGoogle, language);
-            log.info("CheckTextService ResultOfScan={}", result);
+            var result = googleSearcher.getResultOfScan(sentence, urlFoundedInGoogle, language);
+            log.info("CheckTextService ResultOfScan=[{}, {}]", result[0], result[1]);
             resultOfText += (int) result[0];
             urlsList.addAll((ArrayList<String>) result[1]);
         }

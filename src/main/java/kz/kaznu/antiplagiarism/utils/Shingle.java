@@ -43,7 +43,7 @@ public class Shingle {
     public ArrayList<Integer> getArrayListOfGeneratedShingles(String textForCheck, String language) {
         var shinglesList = new ArrayList<Integer>();
         var canonizedText = getCanonizedText(textForCheck.toLowerCase(), language);
-        var canonizedTextWords = canonizedText.split(" ");
+        var canonizedTextWords = canonizedText.split("[ \\n]+");
         var shinglesNumber = canonizedTextWords.length - SHINGLE_LEN;
         var shingleStringBuilder = new StringBuilder();
         for (int i = 0; i <= shinglesNumber; i++) {
