@@ -2,6 +2,7 @@ package kz.kaznu.antiplagiarism.service;
 
 import kz.kaznu.antiplagiarism.exception.BadRequestException;
 import kz.kaznu.antiplagiarism.model.Result;
+import kz.kaznu.antiplagiarism.model.dto.ResultDto;
 import kz.kaznu.antiplagiarism.repos.ResultRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -27,25 +29,37 @@ import java.util.List;
 public class AntiPlagiarismService {
 
     private final ResultRepo resultRepo;
-    private final CheckTextService checkTextService;
+    private final GoogleSearcherService googleSearcherService;
 
     static final List<String> allowedExtensionList = Arrays.asList("pdf", "docx");
 
-    public String getResult(String text, MultipartFile file, String language) {
+    private ResultDto getResultDto(String userText, String language) {
+        var sentences = userText.split("\\.");
+        double resultOfText = 0;
+        var urlsList = new ArrayList<String>();
+        for (var sentence : sentences) {
+            var urlFoundedInGoogle = googleSearcherService.findUrlsBySentence(sentence);
+            var resultDtoFromGoogleSearcherService = googleSearcherService.getResultOfScan(sentence, urlFoundedInGoogle, language);
+            resultOfText += resultDtoFromGoogleSearcherService.getPercentage();
+            urlsList.addAll(resultDtoFromGoogleSearcherService.getUrls());
+        }
+        return ResultDto.builder()
+                .percentage(100 - (resultOfText / sentences.length))
+                .urls(urlsList)
+                .build();
+    }
+
+    public ResultDto getResultDto(String text, MultipartFile file, String language) {
         log.info("GetResult text={}, file={}", text, file);
         if (!file.isEmpty()) {
             text = extractTextFromFile(file);
             log.info("GetResult-final text={}", text);
         }
         try {
-            var resultCharacter = checkTextService.start(text, language);
-            double resultPercentage = 100 - (int) resultCharacter[0];
-            var dateNow = new Date();
-            var formatForDateNow = new SimpleDateFormat("E yyyy.MM.dd");
-            var result = getNewResult(resultPercentage, formatForDateNow.format(dateNow));
-            log.info("GetResult result={}", result);
-            resultRepo.save(result);
-            return String.valueOf(result.getResult());
+            var resultDto = getResultDto(text, language);
+            var resultDb = getNewResult(resultDto.getPercentage(), getFormattedDate());
+            log.info("GetResult resultDb={}", resultDb);
+            return resultDto;
         } catch (Exception e) {
             log.error("AntiPlagiarismService-getResult", e);
             throw new RuntimeException();
@@ -56,7 +70,7 @@ public class AntiPlagiarismService {
         Result result = new Result();
         result.setDate(date);
         result.setResult(resultPercentage);
-        return result;
+        return resultRepo.save(result);
     }
 
     private String extractTextFromFile(MultipartFile file) {
@@ -101,6 +115,12 @@ public class AntiPlagiarismService {
 
     private String getExtension(MultipartFile file){
         return FilenameUtils.getExtension(file.getOriginalFilename());
+    }
+
+    private String getFormattedDate() {
+        var dateNow = new Date();
+        var formatForDateNow = new SimpleDateFormat("E yyyy.MM.dd");
+        return formatForDateNow.format(dateNow);
     }
 
     public void validateInputTextAndFile(String text, MultipartFile file) {

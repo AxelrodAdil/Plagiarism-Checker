@@ -11,7 +11,6 @@ public class AntiPlagiarismApplication {
     }
 
     // TODO:
-//    add error handler
 //    use msa patterns
 //    executorService
 //    front -> back

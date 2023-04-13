@@ -5,30 +5,38 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 
 @Slf4j
-public class Shingle {
+public final class ShingleUtils {
+
+    private ShingleUtils() {
+    }
 
     private static final String[] STOP_SYMBOLS = {".", ",", "!", "?", ":", ";", "-", "\\", "/", "*", "(", ")", "+", "@",
             "#", "$", "%", "^", "&", "=", "'", "\"", "[", "]", "{", "}", "|"};
+    private static final String[] STOP_WORDS_KZ = {"әлде", "біз", "бірақ", "бірде", "болды", "болдыр", "болмаса", "болмасын",
+            "болса", "болсын", "бір", "бірге", "бірнеше", "бірқанша", "егер", "енді", "және", "үшін", "қарқын", "мұнда",
+            "ол", "оның", "оған", "саған", "себебі", "сіз", "сондықтан", "сонда", "сонша", "тіпті", "шейін"};
+    private static final String[] STOP_WORDS_EN = {"a", "an", "the", "in", "on", "at", "to", "for", "of", "by", "with",
+            "without", "than", "that", "this", "these", "those", "and", "or", "but", "nor", "yet", "so", "it", "he", "she",
+            "they", "we", "you", "who", "what", "where", "when", "why", "how", "is", "am", "are", "was", "were", "be", "being",
+            "been", "have", "has", "had", "do", "does", "did", "can", "could", "will", "would", "should", "may", "might", "must",
+            "some", "any", "many", "few", "several", "each", "every", "all", "both", "much", "more", "most", "other", "another"};
     private static final String[] STOP_WORDS_RU = {"это", "как", "так", "и", "в", "над", "к", "до", "не", "на", "но", "за",
             "то", "с", "ли", "а", "во", "от", "со", "для", "о", "же", "ну", "вы",
             "бы", "что", "кто", "он", "она"};
-    private static final String[] STOP_WORDS_KZ = {};
-    private static final String[] STOP_WORDS_EN = {};
 
-    private static final String LANGUAGE_RU = "ru";
     private static final String LANGUAGE_KZ = "kk";
-    private static final String LANGUAGE_EN = "en";
+    private static final String LANGUAGE_RU = "ru";
 
     private static final int SHINGLE_LEN = 2;
 
-    private String getCanonizedText(String text, String[] stopWordsArray) {
+    private static String getCanonizedText(String text, String[] stopWordsArray) {
         for (var stopWord : stopWordsArray) {
             text = text.replace(" " + stopWord + " ", " ");
         }
         return text;
     }
 
-    public String getCanonizedText(String text, String language) {
+    public static String getCanonizedText(String text, String language) {
         for (var stopSymbol : STOP_SYMBOLS) {
             text = text.replace(stopSymbol, "");
         }
@@ -40,7 +48,7 @@ public class Shingle {
         return text;
     }
 
-    public ArrayList<Integer> getArrayListOfGeneratedShingles(String textForCheck, String language) {
+    public static ArrayList<Integer> getArrayListOfGeneratedShingles(String textForCheck, String language) {
         var shinglesList = new ArrayList<Integer>();
         var canonizedText = getCanonizedText(textForCheck.toLowerCase(), language);
         var canonizedTextWords = canonizedText.split("[ \\n]+");
@@ -56,7 +64,7 @@ public class Shingle {
         return shinglesList;
     }
 
-    public double getResultOfComparison(ArrayList<Integer> textShinglesFirst, ArrayList<Integer> textShinglesSecond) {
+    public static double getResultOfComparison(ArrayList<Integer> textShinglesFirst, ArrayList<Integer> textShinglesSecond) {
         if (textShinglesFirst == null || textShinglesSecond == null) return 0.0;
         var textShinglesNumber = textShinglesFirst.size();
         double similarShinglesNumber = textShinglesFirst.stream()
