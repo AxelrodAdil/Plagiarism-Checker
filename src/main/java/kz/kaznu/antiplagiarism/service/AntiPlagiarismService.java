@@ -40,18 +40,20 @@ public class AntiPlagiarismService {
         for (var sentence : sentences) {
             var urlFoundedInGoogle = googleSearcherService.findUrlsBySentence(sentence);
             var resultDtoFromGoogleSearcherService = googleSearcherService.getResultOfScan(sentence, urlFoundedInGoogle, language);
-            resultOfText += resultDtoFromGoogleSearcherService.getPercentage();
-            urlsList.addAll(resultDtoFromGoogleSearcherService.getUrls());
+            if (!resultDtoFromGoogleSearcherService.getPercentage().isNaN()) {
+                resultOfText += resultDtoFromGoogleSearcherService.getPercentage();
+                urlsList.addAll(resultDtoFromGoogleSearcherService.getUrls());
+            }
         }
         return ResultDto.builder()
-                .percentage(100 - (resultOfText / sentences.length))
+                .percentage(100 - (getFormattedResultPercentage(resultOfText) / sentences.length))
                 .urls(urlsList)
                 .build();
     }
 
     public ResultDto getResultDto(String text, MultipartFile file, String language) {
         log.info("GetResult text={}, file={}", text, file);
-        if (!file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             text = extractTextFromFile(file);
             log.info("GetResult-final text={}", text);
         }
@@ -59,6 +61,7 @@ public class AntiPlagiarismService {
             var resultDto = getResultDto(text, language);
             var resultDb = getNewResult(resultDto.getPercentage(), getFormattedDate());
             log.info("GetResult resultDb={}", resultDb);
+            log.info("GetResult resultDto={}", resultDto);
             return resultDto;
         } catch (Exception e) {
             log.error("AntiPlagiarismService-getResult", e);
@@ -113,7 +116,7 @@ public class AntiPlagiarismService {
         }
     }
 
-    private String getExtension(MultipartFile file){
+    private String getExtension(MultipartFile file) {
         return FilenameUtils.getExtension(file.getOriginalFilename());
     }
 
@@ -123,11 +126,15 @@ public class AntiPlagiarismService {
         return formatForDateNow.format(dateNow);
     }
 
+    private Double getFormattedResultPercentage(Double resultOfText) {
+        return Double.parseDouble(String.format("%.2f", resultOfText).replace(",", "."));
+    }
+
     public void validateInputTextAndFile(String text, MultipartFile file) {
-        if (!file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             String extension = getExtension(file);
             log.info("AntiPlagiarismService-validateInputTextAndFile extension={}", extension);
-            if (!allowedExtensionList.contains(extension)){
+            if (!allowedExtensionList.contains(extension)) {
                 log.error("Not allowed extension {}", extension);
                 throw new BadRequestException("Not allowed extension");
             }

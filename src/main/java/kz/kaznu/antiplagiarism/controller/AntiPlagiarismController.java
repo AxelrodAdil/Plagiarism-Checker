@@ -16,6 +16,7 @@ public class AntiPlagiarismController {
 
     private final AntiPlagiarismService antiPlagiarismService;
 
+//    @CrossOrigin(origins = "*")
     @PostMapping(
             value = "/upload",
             produces = MediaType.APPLICATION_JSON_VALUE,
